@@ -14,7 +14,7 @@ class USCIS(object):
         r = requests.post(self.url, headers=self.header, data=self.payload)
 
         try:
-            bs = BeautifulSoup(r.content, "lxml")
+            bs = BeautifulSoup(r.content, "html.parser")
             current_status = bs.find('div', "current-status-sec").text.replace("Your Current Status:", "")
             current_status = re.sub(r'[\t\n\r+]', "", current_status)
             detail = bs.find('div', "rows text-center").text

@@ -1,4 +1,4 @@
-import time, argparse
+import json, time, argparse
 from smtplib import SMTPException
 from uscis import USCIS
 from gmail import Gmail
@@ -26,8 +26,17 @@ def run(uscis_client, gmail_client, verbose=False):
                 time.sleep(3)
     except SMTPException as e:
         print('Error sending mail: [Message: {0}]'.format(e))
+        return 500, str(e)
     finally:
         gmail_client.close()
+    return 200, "Success"
+
+def lambda_handler(event, context):
+    status_code, msg = run(USCIS(), Gmail(), True)
+    return {
+        'statusCode': status_code,
+        'body': json.dumps(msg)
+    }
 
 
 if __name__ == "__main__":
